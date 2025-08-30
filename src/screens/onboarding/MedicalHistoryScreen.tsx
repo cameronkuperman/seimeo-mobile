@@ -10,7 +10,7 @@ const MedicalHistoryScreen = () => {
   
   return (
     <LinearGradient
-      colors={[Colors.background, Colors.primaryMuted, Colors.mint]}
+      colors={[Colors.background, Colors.lavender, Colors.mint]}
       locations={[0, 0.7, 1]}
       style={styles.gradient}
     >
@@ -21,7 +21,7 @@ const MedicalHistoryScreen = () => {
           <Button
             variant="primary"
             size="large"
-            onPress={() => navigation.navigate('WelcomeHome', { name: 'User' })}
+            onPress={() => navigation.navigate('SaveProgress')}
             style={styles.button}
           >
             Continue

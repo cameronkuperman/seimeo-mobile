@@ -1,15 +1,14 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
-  TextInput,
   Platform,
-  KeyboardAvoidingView,
   ScrollView,
 } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { OnboardingStackParamList } from '../../navigation/OnboardingNavigator';
@@ -20,16 +19,21 @@ type NavigationProp = NativeStackNavigationProp<OnboardingStackParamList, 'Heigh
 const HeightWeightScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const [unit, setUnit] = useState<'imperial' | 'metric'>('imperial');
-  const [feet, setFeet] = useState('');
-  const [inches, setInches] = useState('');
-  const [cm, setCm] = useState('');
-  const [weight, setWeight] = useState('');
+  const [feet, setFeet] = useState(5);
+  const [inches, setInches] = useState(6);
+  const [cm, setCm] = useState(170);
+  const [weightLbs, setWeightLbs] = useState(120);
+  const [weightKg, setWeightKg] = useState(55);
   
-  const inchesRef = useRef<TextInput>(null);
-  const weightRef = useRef<TextInput>(null);
+  // Generate picker values
+  const feetValues = useMemo(() => Array.from({length: 6}, (_, i) => i + 3), []); // 3-8 ft
+  const inchesValues = useMemo(() => Array.from({length: 12}, (_, i) => i), []); // 0-11 in
+  const cmValues = useMemo(() => Array.from({length: 131}, (_, i) => i + 120), []); // 120-250 cm
+  const lbsValues = useMemo(() => Array.from({length: 401}, (_, i) => i + 50), []); // 50-450 lbs
+  const kgValues = useMemo(() => Array.from({length: 181}, (_, i) => i + 20), []); // 20-200 kg
 
   const handleContinue = () => {
-    navigation.navigate('MedicalHistory');
+    navigation.navigate('HealthGoals');
   };
 
   const calculateBMI = () => {
@@ -38,14 +42,14 @@ const HeightWeightScreen: React.FC = () => {
 
     if (unit === 'imperial') {
       // Convert feet and inches to meters
-      const totalInches = (parseInt(feet) || 0) * 12 + (parseInt(inches) || 0);
+      const totalInches = feet * 12 + inches;
       heightInMeters = totalInches * 0.0254;
       // Convert pounds to kg
-      weightInKg = (parseFloat(weight) || 0) * 0.453592;
+      weightInKg = weightLbs * 0.453592;
     } else {
       // Convert cm to meters
-      heightInMeters = (parseInt(cm) || 0) / 100;
-      weightInKg = parseFloat(weight) || 0;
+      heightInMeters = cm / 100;
+      weightInKg = weightKg;
     }
 
     if (heightInMeters > 0 && weightInKg > 0) {
@@ -57,9 +61,9 @@ const HeightWeightScreen: React.FC = () => {
 
   const getBMIStatus = (bmi: number) => {
     if (bmi < 18.5) return { text: 'Underweight', color: Colors.amber };
-    if (bmi < 25) return { text: 'Normal', color: Colors.health };
-    if (bmi < 30) return { text: 'Overweight', color: Colors.amber };
-    return { text: 'Obese', color: Colors.coral };
+    if (bmi < 25) return { text: 'Healthy range', color: Colors.health };
+    if (bmi < 30) return { text: 'Above optimal', color: Colors.amber };
+    return { text: 'Health risk', color: Colors.coral };
   };
 
   const bmi = calculateBMI();
@@ -67,29 +71,26 @@ const HeightWeightScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
       >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          {/* Progress Bar */}
-          <View style={styles.progressContainer}>
-            <View style={styles.progressBar}>
-              <View style={[styles.progressFill, { width: '40%' }]} />
-            </View>
+        {/* Progress Bar */}
+        <View style={styles.progressContainer}>
+          <View style={styles.progressBar}>
+            <View style={[styles.progressFill, { width: '50%' }]} />
           </View>
+        </View>
 
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.title}>Height & weight</Text>
-            <Text style={styles.subtitle}>
-              This will be used to calibrate your custom plan.
-            </Text>
-          </View>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Height & weight</Text>
+          <Text style={styles.subtitle}>
+            This will be used to calibrate your{' '}
+            <Text style={styles.subtitleEmphasis}>custom plan</Text>.
+          </Text>
+        </View>
 
           {/* Unit Toggle */}
           <View style={styles.unitToggle}>
@@ -123,89 +124,96 @@ const HeightWeightScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
 
-          {/* Input Fields */}
-          <View style={styles.inputContainer}>
-            {/* Height Input */}
-            <View style={styles.inputSection}>
-              <Text style={styles.inputLabel}>Height</Text>
+          {/* Picker Section */}
+          <View style={styles.pickerContainer}>
+            {/* Height Pickers */}
+            <View style={styles.pickerSection}>
+              <Text style={styles.pickerLabel}>Height</Text>
+              <Text style={styles.pickerSublabel}>{unit === 'imperial' ? 'feet & inches' : 'centimeters'}</Text>
+              
               {unit === 'imperial' ? (
-                <View style={styles.imperialHeight}>
-                  <View style={styles.imperialInput}>
-                    <TextInput
-                      style={styles.input}
-                      value={feet}
-                      onChangeText={setFeet}
-                      placeholder="5"
-                      placeholderTextColor={Colors.textPlaceholder}
-                      keyboardType="number-pad"
-                      maxLength={1}
-                      returnKeyType="next"
-                      onSubmitEditing={() => inchesRef.current?.focus()}
-                    />
-                    <Text style={styles.unitText}>ft</Text>
+                <View style={styles.dualPickerRow}>
+                  <View style={styles.pickerWrapper}>
+                    <Picker
+                      selectedValue={feet}
+                      onValueChange={(value) => setFeet(value)}
+                      style={styles.picker}
+                      itemStyle={styles.pickerItem}
+                    >
+                      {feetValues.map(value => (
+                        <Picker.Item key={value} label={`${value} ft`} value={value} />
+                      ))}
+                    </Picker>
                   </View>
-                  <View style={styles.imperialInput}>
-                    <TextInput
-                      ref={inchesRef}
-                      style={styles.input}
-                      value={inches}
-                      onChangeText={setInches}
-                      placeholder="10"
-                      placeholderTextColor={Colors.textPlaceholder}
-                      keyboardType="number-pad"
-                      maxLength={2}
-                      returnKeyType="next"
-                      onSubmitEditing={() => weightRef.current?.focus()}
-                    />
-                    <Text style={styles.unitText}>in</Text>
+                  <View style={styles.pickerWrapper}>
+                    <Picker
+                      selectedValue={inches}
+                      onValueChange={(value) => setInches(value)}
+                      style={styles.picker}
+                      itemStyle={styles.pickerItem}
+                    >
+                      {inchesValues.map(value => (
+                        <Picker.Item key={value} label={`${value} in`} value={value} />
+                      ))}
+                    </Picker>
                   </View>
                 </View>
               ) : (
-                <View style={styles.metricInput}>
-                  <TextInput
-                    style={styles.input}
-                    value={cm}
-                    onChangeText={setCm}
-                    placeholder="175"
-                    placeholderTextColor={Colors.textPlaceholder}
-                    keyboardType="number-pad"
-                    maxLength={3}
-                    returnKeyType="next"
-                    onSubmitEditing={() => weightRef.current?.focus()}
-                  />
-                  <Text style={styles.unitText}>cm</Text>
+                <View style={styles.singlePickerRow}>
+                  <View style={styles.pickerWrapperFull}>
+                    <Picker
+                      selectedValue={cm}
+                      onValueChange={(value) => setCm(value)}
+                      style={styles.picker}
+                      itemStyle={styles.pickerItem}
+                    >
+                      {cmValues.map(value => (
+                        <Picker.Item key={value} label={`${value} cm`} value={value} />
+                      ))}
+                    </Picker>
+                  </View>
                 </View>
               )}
             </View>
 
-            {/* Weight Input */}
-            <View style={styles.inputSection}>
-              <Text style={styles.inputLabel}>Weight</Text>
-              <View style={styles.metricInput}>
-                <TextInput
-                  ref={weightRef}
-                  style={styles.input}
-                  value={weight}
-                  onChangeText={setWeight}
-                  placeholder={unit === 'imperial' ? '150' : '70'}
-                  placeholderTextColor={Colors.textPlaceholder}
-                  keyboardType="decimal-pad"
-                  maxLength={5}
-                  returnKeyType="done"
-                />
-                <Text style={styles.unitText}>{unit === 'imperial' ? 'lb' : 'kg'}</Text>
+            {/* Weight Picker */}
+            <View style={styles.pickerSection}>
+              <Text style={styles.pickerLabel}>Weight</Text>
+              <Text style={styles.pickerSublabel}>{unit === 'imperial' ? 'pounds' : 'kilograms'}</Text>
+              
+              <View style={styles.singlePickerRow}>
+                <View style={styles.pickerWrapperFull}>
+                  <Picker
+                    selectedValue={unit === 'imperial' ? weightLbs : weightKg}
+                    onValueChange={(value) => unit === 'imperial' ? setWeightLbs(value) : setWeightKg(value)}
+                    style={styles.picker}
+                    itemStyle={styles.pickerItem}
+                  >
+                    {(unit === 'imperial' ? lbsValues : kgValues).map(value => (
+                      <Picker.Item 
+                        key={value} 
+                        label={`${value} ${unit === 'imperial' ? 'lbs' : 'kg'}`} 
+                        value={value} 
+                      />
+                    ))}
+                  </Picker>
+                </View>
               </View>
             </View>
 
             {/* BMI Display */}
             {bmi && bmiStatus && (
               <View style={styles.bmiContainer}>
-                <Text style={styles.bmiLabel}>BMI</Text>
-                <View style={styles.bmiValue}>
+                <View style={styles.bmiHeader}>
+                  <Text style={styles.bmiLabel}>Your BMI</Text>
                   <Text style={styles.bmiNumber}>{bmi}</Text>
-                  <Text style={[styles.bmiStatus, { color: bmiStatus.color }]}>
-                    {bmiStatus.text}
-                  </Text>
+                </View>
+                <View style={styles.bmiStatusContainer}>
+                  <View style={[styles.bmiStatusBadge, { backgroundColor: bmiStatus.color + '20' }]}>
+                    <Text style={[styles.bmiStatus, { color: bmiStatus.color }]}>
+                      {bmiStatus.text}
+                    </Text>
+                  </View>
                 </View>
               </View>
             )}
@@ -222,7 +230,6 @@ const HeightWeightScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -232,162 +239,199 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  keyboardView: {
-    flex: 1,
-  },
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: 20,
   },
   progressContainer: {
-    marginTop: 20,
-    marginBottom: 30,
+    marginTop: Platform.OS === 'ios' ? 10 : 20,
+    marginBottom: 40,
   },
   progressBar: {
-    height: 4,
+    height: 3,
     backgroundColor: Colors.borderLight,
-    borderRadius: 2,
+    borderRadius: 1.5,
   },
   progressFill: {
-    height: 4,
-    backgroundColor: Colors.black,
-    borderRadius: 2,
+    height: 3,
+    backgroundColor: Colors.health,
+    borderRadius: 1.5,
   },
   header: {
-    marginBottom: 30,
+    marginBottom: 40,
   },
   title: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: '700',
     color: Colors.textPrimary,
-    marginBottom: 8,
+    marginBottom: 10,
+    letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: 17,
+    fontSize: 18,
     color: Colors.textSecondary,
-    lineHeight: 24,
+    lineHeight: 26,
+    letterSpacing: -0.2,
+  },
+  subtitleEmphasis: {
+    color: Colors.textPrimary,
+    fontWeight: '600',
   },
   unitToggle: {
     flexDirection: 'row',
     backgroundColor: Colors.backgroundSecondary,
-    borderRadius: 12,
-    padding: 4,
-    marginBottom: 30,
+    borderRadius: 14,
+    padding: 3,
+    marginBottom: 35,
   },
   unitButton: {
     flex: 1,
-    paddingVertical: 12,
-    borderRadius: 8,
+    paddingVertical: 13,
+    borderRadius: 11,
     alignItems: 'center',
   },
   unitButtonActive: {
     backgroundColor: Colors.white,
     shadowColor: Colors.shadowLight,
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 1,
+    shadowOpacity: 0.8,
     shadowRadius: 2,
+    elevation: 2,
   },
   unitButtonText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '500',
     color: Colors.textSecondary,
+    letterSpacing: -0.2,
   },
   unitButtonTextActive: {
     color: Colors.textPrimary,
     fontWeight: '600',
   },
-  inputContainer: {
+  pickerContainer: {
     flex: 1,
+    marginTop: 10,
   },
-  inputSection: {
-    marginBottom: 24,
+  pickerSection: {
+    marginBottom: 35,
   },
-  inputLabel: {
-    fontSize: 16,
+  pickerLabel: {
+    fontSize: 14,
     fontWeight: '600',
-    color: Colors.textPrimary,
-    marginBottom: 12,
+    color: Colors.textTertiary,
+    marginBottom: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
-  imperialHeight: {
+  pickerSublabel: {
+    fontSize: 15,
+    color: Colors.textSecondary,
+    marginBottom: 16,
+  },
+  dualPickerRow: {
     flexDirection: 'row',
     gap: 12,
   },
-  imperialInput: {
-    flex: 1,
+  singlePickerRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.white,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    paddingHorizontal: 16,
-    height: 56,
   },
-  metricInput: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.white,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    paddingHorizontal: 16,
-    height: 56,
-  },
-  input: {
+  pickerWrapper: {
     flex: 1,
-    fontSize: 18,
-    fontWeight: '500',
+    height: 180,
+    backgroundColor: Colors.backgroundSecondary,
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+  },
+  pickerWrapperFull: {
+    flex: 1,
+    height: 180,
+    backgroundColor: Colors.backgroundSecondary,
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+  },
+  picker: {
+    width: '100%',
+    height: 180,
+  },
+  pickerItem: {
+    fontSize: 20,
+    height: 180,
     color: Colors.textPrimary,
-  },
-  unitText: {
-    fontSize: 16,
-    color: Colors.textSecondary,
-    marginLeft: 8,
+    fontWeight: '500',
   },
   bmiContainer: {
-    backgroundColor: Colors.backgroundSecondary,
-    borderRadius: 12,
+    backgroundColor: Colors.white,
+    borderRadius: 16,
     padding: 20,
-    marginTop: 20,
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.shadowLight,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.5,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
+  },
+  bmiHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
   },
   bmiLabel: {
     fontSize: 14,
     color: Colors.textTertiary,
-    marginBottom: 8,
-  },
-  bmiValue: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    gap: 12,
+    fontWeight: '500',
+    letterSpacing: 0.3,
   },
   bmiNumber: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: '700',
     color: Colors.textPrimary,
+    letterSpacing: -0.5,
+  },
+  bmiStatusContainer: {
+    flexDirection: 'row',
+  },
+  bmiStatusBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
   },
   bmiStatus: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: '600',
+    letterSpacing: -0.2,
   },
   footer: {
-    paddingVertical: 20,
-    paddingBottom: 40,
+    paddingTop: 30,
+    paddingBottom: Platform.OS === 'ios' ? 50 : 40,
   },
   continueButton: {
-    height: 56,
+    height: 58,
     backgroundColor: Colors.black,
-    borderRadius: 28,
+    borderRadius: 29,
     justifyContent: 'center',
     alignItems: 'center',
     ...Platform.select({
       ios: {
         shadowColor: Colors.shadowDark,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 1,
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.8,
         shadowRadius: 8,
       },
       android: {
-        elevation: 4,
+        elevation: 5,
       },
     }),
   },
@@ -395,6 +439,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '600',
     color: Colors.white,
+    letterSpacing: -0.2,
   },
 });
 

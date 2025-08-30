@@ -18,6 +18,7 @@ import HealthGoalsScreen from '../screens/onboarding/HealthGoalsScreen';
 import AIDemoScreen from '../screens/onboarding/AIDemoScreen';
 import PremiumDecisionScreen from '../screens/onboarding/PremiumDecisionScreen';
 import PermissionsScreen from '../screens/onboarding/PermissionsScreen';
+import SaveProgressScreen from '../screens/onboarding/SaveProgressScreen';
 import WelcomeHomeScreen from '../screens/onboarding/WelcomeHomeScreen';
 
 export type OnboardingStackParamList = {
@@ -36,6 +37,7 @@ export type OnboardingStackParamList = {
   AIDemo: undefined;
   PremiumDecision: undefined;
   Permissions: undefined;
+  SaveProgress: undefined;
   WelcomeHome: { name: string };
 };
 
@@ -121,6 +123,10 @@ const OnboardingNavigator = () => {
       <Stack.Screen 
         name="Permissions" 
         component={PermissionsScreen}
+      />
+      <Stack.Screen 
+        name="SaveProgress" 
+        component={SaveProgressScreen}
       />
       <Stack.Screen 
         name="WelcomeHome" 
