@@ -14,11 +14,13 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { OnboardingStackParamList } from '../../navigation/OnboardingNavigator';
 import { Colors } from '../../theme/colors';
+import { useOnboarding } from '../../contexts/OnboardingContext';
 
 type NavigationProp = NativeStackNavigationProp<OnboardingStackParamList, 'Gender'>;
 
 const GenderScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
+  const { getNextScreen } = useOnboarding();
   const [selectedGender, setSelectedGender] = useState<'male' | 'female' | 'other' | null>(null);
   const [otherGenderOption, setOtherGenderOption] = useState<'not_specify' | 'non_binary' | 'custom' | null>(null);
   const [customGender, setCustomGender] = useState('');
@@ -34,7 +36,8 @@ const GenderScreen: React.FC = () => {
           : selectedGender,
       };
       // TODO: Store genderData for 3D model assignment
-      navigation.navigate('HeightWeight');
+      const nextScreen = getNextScreen('Gender');
+      navigation.navigate(nextScreen as any);
     }
   };
 

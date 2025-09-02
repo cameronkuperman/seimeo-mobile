@@ -13,6 +13,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { OnboardingStackParamList } from '../../navigation/OnboardingNavigator';
 import { Button } from '../../components/ui/Button';
 import { Colors } from '../../theme/colors';
+import { useOnboarding } from '../../contexts/OnboardingContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -20,6 +21,7 @@ type NavigationProp = NativeStackNavigationProp<OnboardingStackParamList, 'HeroW
 
 const HeroWelcomeScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
+  const { getNextScreen } = useOnboarding();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -51,7 +53,8 @@ const HeroWelcomeScreen: React.FC = () => {
   }, []);
 
   const handleGetStarted = () => {
-    navigation.navigate('Authentication');
+    const nextScreen = getNextScreen('HeroWelcome');
+    navigation.navigate(nextScreen as any);
   };
 
   const handleSignIn = () => {
@@ -142,8 +145,6 @@ const HeroWelcomeScreen: React.FC = () => {
             </Button>
           </View>
 
-          {/* Bottom indicator */}
-          <View style={styles.indicator} />
         </Animated.View>
       </SafeAreaView>
   );
@@ -166,11 +167,11 @@ const styles = StyleSheet.create({
     minHeight: height * 0.4,
   },
   phonePlaceholder: {
-    width: width * 0.65,
-    height: height * 0.35,
+    width: width * 0.48,
+    height: height * 0.42,
     backgroundColor: Colors.black,
-    borderRadius: 40,
-    padding: 8,
+    borderRadius: 36,
+    padding: 6,
     ...Platform.select({
       ios: {
         shadowColor: Colors.shadowDark,
@@ -186,7 +187,7 @@ const styles = StyleSheet.create({
   phoneScreen: {
     flex: 1,
     backgroundColor: Colors.white,
-    borderRadius: 32,
+    borderRadius: 30,
     padding: 20,
     alignItems: 'center',
   },
@@ -239,7 +240,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     alignItems: 'center',
-    marginVertical: 30,
+    marginVertical: 45,
   },
   headline: {
     fontSize: 32,
@@ -256,23 +257,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   buttonContainer: {
-    paddingBottom: 20,
+    paddingBottom: 40,
   },
   primaryButton: {
     width: '100%',
     marginBottom: 16,
+    borderRadius: 30,
   },
   secondaryButton: {
     alignSelf: 'center',
-  },
-  indicator: {
-    width: 134,
-    height: 5,
-    backgroundColor: Colors.black,
-    borderRadius: 2.5,
-    alignSelf: 'center',
-    marginTop: 20,
-    marginBottom: 10,
   },
 });
 

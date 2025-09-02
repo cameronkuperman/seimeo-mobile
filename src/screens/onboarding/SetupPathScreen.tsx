@@ -11,15 +11,21 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { OnboardingStackParamList } from '../../navigation/OnboardingNavigator';
 import { Colors } from '../../theme/colors';
+import { useOnboarding } from '../../contexts/OnboardingContext';
 
 type NavigationProp = NativeStackNavigationProp<OnboardingStackParamList, 'SetupPath'>;
 
 const SetupPathScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
-  const [selectedPath, setSelectedPath] = useState<'quick' | 'standard' | 'complete'>('standard');
+  const { setSelectedPath, getNextScreen } = useOnboarding();
+  const [localPath, setLocalPath] = useState<'express' | 'regular' | 'complete'>('regular');
 
   const handleContinue = () => {
-    navigation.navigate('Birthday');
+    // Save to context
+    setSelectedPath(localPath);
+    // Navigate to next screen based on path
+    const nextScreen = getNextScreen('SetupPath');
+    navigation.navigate(nextScreen as any);
   };
 
   return (
@@ -35,49 +41,49 @@ const SetupPathScreen: React.FC = () => {
 
         {/* Option Cards - Cal AI Style */}
         <View style={styles.optionsContainer}>
-          {/* Quick Option */}
+          {/* Express Option */}
           <TouchableOpacity
             style={[
               styles.optionCard,
-              selectedPath === 'quick' && styles.optionCardSelected
+              localPath === 'express' && styles.optionCardSelected
             ]}
-            onPress={() => setSelectedPath('quick')}
+            onPress={() => setLocalPath('express')}
             activeOpacity={0.7}
           >
             <View style={styles.optionContent}>
               <View style={styles.optionHeader}>
                 <Text style={[
                   styles.optionTitle,
-                  selectedPath === 'quick' && styles.optionTitleSelected
-                ]}>Quick</Text>
-                <Text style={styles.optionTime}>2 min</Text>
+                  localPath === 'express' && styles.optionTitleSelected
+                ]}>Express</Text>
+                <Text style={styles.optionTime}>3 min</Text>
               </View>
               <Text style={[
                 styles.optionDescription,
-                selectedPath === 'quick' && styles.optionDescriptionSelected
+                localPath === 'express' && styles.optionDescriptionSelected
               ]}>
                 Just the essentials to get started
               </Text>
             </View>
             <View style={[
               styles.radioButton,
-              selectedPath === 'quick' && styles.radioButtonSelected
+              localPath === 'express' && styles.radioButtonSelected
             ]}>
-              {selectedPath === 'quick' && <View style={styles.radioButtonInner} />}
+              {localPath === 'express' && <View style={styles.radioButtonInner} />}
             </View>
           </TouchableOpacity>
 
-          {/* Standard Option - Recommended */}
+          {/* Regular Option - Recommended */}
           <TouchableOpacity
             style={[
               styles.optionCard,
-              selectedPath === 'standard' && styles.optionCardSelected,
+              localPath === 'regular' && styles.optionCardSelected,
               styles.recommendedCard
             ]}
-            onPress={() => setSelectedPath('standard')}
+            onPress={() => setLocalPath('regular')}
             activeOpacity={0.7}
           >
-            {selectedPath === 'standard' && (
+            {localPath === 'regular' && (
               <View style={styles.selectedIndicator} />
             )}
             <View style={styles.optionContent}>
@@ -85,8 +91,8 @@ const SetupPathScreen: React.FC = () => {
                 <View style={styles.titleRow}>
                   <Text style={[
                     styles.optionTitle,
-                    selectedPath === 'standard' && styles.optionTitleSelected
-                  ]}>Standard</Text>
+                    localPath === 'regular' && styles.optionTitleSelected
+                  ]}>Regular</Text>
                   <View style={styles.recommendedBadge}>
                     <Text style={styles.recommendedText}>RECOMMENDED</Text>
                   </View>
@@ -95,16 +101,16 @@ const SetupPathScreen: React.FC = () => {
               </View>
               <Text style={[
                 styles.optionDescription,
-                selectedPath === 'standard' && styles.optionDescriptionSelected
+                localPath === 'regular' && styles.optionDescriptionSelected
               ]}>
                 Personalized AI recommendations
               </Text>
             </View>
             <View style={[
               styles.radioButton,
-              selectedPath === 'standard' && styles.radioButtonSelected
+              localPath === 'regular' && styles.radioButtonSelected
             ]}>
-              {selectedPath === 'standard' && <View style={styles.radioButtonInner} />}
+              {localPath === 'regular' && <View style={styles.radioButtonInner} />}
             </View>
           </TouchableOpacity>
 
@@ -112,31 +118,31 @@ const SetupPathScreen: React.FC = () => {
           <TouchableOpacity
             style={[
               styles.optionCard,
-              selectedPath === 'complete' && styles.optionCardSelected
+              localPath === 'complete' && styles.optionCardSelected
             ]}
-            onPress={() => setSelectedPath('complete')}
+            onPress={() => setLocalPath('complete')}
             activeOpacity={0.7}
           >
             <View style={styles.optionContent}>
               <View style={styles.optionHeader}>
                 <Text style={[
                   styles.optionTitle,
-                  selectedPath === 'complete' && styles.optionTitleSelected
+                  localPath === 'complete' && styles.optionTitleSelected
                 ]}>Complete</Text>
                 <Text style={styles.optionTime}>10 min</Text>
               </View>
               <Text style={[
                 styles.optionDescription,
-                selectedPath === 'complete' && styles.optionDescriptionSelected
+                localPath === 'complete' && styles.optionDescriptionSelected
               ]}>
                 Full medical profile with family history
               </Text>
             </View>
             <View style={[
               styles.radioButton,
-              selectedPath === 'complete' && styles.radioButtonSelected
+              localPath === 'complete' && styles.radioButtonSelected
             ]}>
-              {selectedPath === 'complete' && <View style={styles.radioButtonInner} />}
+              {localPath === 'complete' && <View style={styles.radioButtonInner} />}
             </View>
           </TouchableOpacity>
         </View>

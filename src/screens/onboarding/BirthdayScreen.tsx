@@ -11,17 +11,20 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { OnboardingStackParamList } from '../../navigation/OnboardingNavigator';
 import { Colors } from '../../theme/colors';
+import { useOnboarding } from '../../contexts/OnboardingContext';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 type NavigationProp = NativeStackNavigationProp<OnboardingStackParamList, 'Birthday'>;
 
 const BirthdayScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
+  const { getNextScreen } = useOnboarding();
   const [date, setDate] = useState(new Date(1995, 0, 1));
   const [showPicker, setShowPicker] = useState(Platform.OS === 'ios');
 
   const handleContinue = () => {
-    navigation.navigate('Gender');
+    const nextScreen = getNextScreen('Birthday');
+    navigation.navigate(nextScreen as any);
   };
 
   const onChange = (event: any, selectedDate?: Date) => {

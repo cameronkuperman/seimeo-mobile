@@ -13,11 +13,13 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { OnboardingStackParamList } from '../../navigation/OnboardingNavigator';
 import { Colors } from '../../theme/colors';
+import { useOnboarding } from '../../contexts/OnboardingContext';
 
 type NavigationProp = NativeStackNavigationProp<OnboardingStackParamList, 'HeightWeight'>;
 
 const HeightWeightScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
+  const { getNextScreen } = useOnboarding();
   const [unit, setUnit] = useState<'imperial' | 'metric'>('imperial');
   const [feet, setFeet] = useState(5);
   const [inches, setInches] = useState(6);
@@ -33,7 +35,8 @@ const HeightWeightScreen: React.FC = () => {
   const kgValues = useMemo(() => Array.from({length: 181}, (_, i) => i + 20), []); // 20-200 kg
 
   const handleContinue = () => {
-    navigation.navigate('HealthGoals');
+    const nextScreen = getNextScreen('HeightWeight');
+    navigation.navigate(nextScreen as any);
   };
 
   const calculateBMI = () => {
@@ -126,80 +129,86 @@ const HeightWeightScreen: React.FC = () => {
 
           {/* Picker Section */}
           <View style={styles.pickerContainer}>
-            {/* Height Pickers */}
-            <View style={styles.pickerSection}>
-              <Text style={styles.pickerLabel}>Height</Text>
-              <Text style={styles.pickerSublabel}>{unit === 'imperial' ? 'feet & inches' : 'centimeters'}</Text>
-              
-              {unit === 'imperial' ? (
-                <View style={styles.dualPickerRow}>
-                  <View style={styles.pickerWrapper}>
-                    <Picker
-                      selectedValue={feet}
-                      onValueChange={(value) => setFeet(value)}
-                      style={styles.picker}
-                      itemStyle={styles.pickerItem}
-                    >
-                      {feetValues.map(value => (
-                        <Picker.Item key={value} label={`${value} ft`} value={value} />
-                      ))}
-                    </Picker>
-                  </View>
-                  <View style={styles.pickerWrapper}>
-                    <Picker
-                      selectedValue={inches}
-                      onValueChange={(value) => setInches(value)}
-                      style={styles.picker}
-                      itemStyle={styles.pickerItem}
-                    >
-                      {inchesValues.map(value => (
-                        <Picker.Item key={value} label={`${value} in`} value={value} />
-                      ))}
-                    </Picker>
-                  </View>
-                </View>
-              ) : (
-                <View style={styles.singlePickerRow}>
-                  <View style={styles.pickerWrapperFull}>
-                    <Picker
-                      selectedValue={cm}
-                      onValueChange={(value) => setCm(value)}
-                      style={styles.picker}
-                      itemStyle={styles.pickerItem}
-                    >
-                      {cmValues.map(value => (
-                        <Picker.Item key={value} label={`${value} cm`} value={value} />
-                      ))}
-                    </Picker>
-                  </View>
-                </View>
-              )}
-            </View>
-
-            {/* Weight Picker */}
-            <View style={styles.pickerSection}>
-              <Text style={styles.pickerLabel}>Weight</Text>
-              <Text style={styles.pickerSublabel}>{unit === 'imperial' ? 'pounds' : 'kilograms'}</Text>
-              
-              <View style={styles.singlePickerRow}>
-                <View style={styles.pickerWrapperFull}>
+            {/* Combined Height & Weight Label */}
+            <Text style={styles.pickerLabel}>Height & Weight</Text>
+            <Text style={styles.pickerSublabel}>Scroll to select your measurements</Text>
+            
+            {/* Inline Pickers Row */}
+            {unit === 'imperial' ? (
+              <View style={styles.inlinePickerRow}>
+                {/* Feet Picker */}
+                <View style={styles.inlinePickerWrapper}>
                   <Picker
-                    selectedValue={unit === 'imperial' ? weightLbs : weightKg}
-                    onValueChange={(value) => unit === 'imperial' ? setWeightLbs(value) : setWeightKg(value)}
+                    selectedValue={feet}
+                    onValueChange={(value) => setFeet(value)}
                     style={styles.picker}
                     itemStyle={styles.pickerItem}
                   >
-                    {(unit === 'imperial' ? lbsValues : kgValues).map(value => (
-                      <Picker.Item 
-                        key={value} 
-                        label={`${value} ${unit === 'imperial' ? 'lbs' : 'kg'}`} 
-                        value={value} 
-                      />
+                    {feetValues.map(value => (
+                      <Picker.Item key={value} label={`${value} ft`} value={value} />
+                    ))}
+                  </Picker>
+                </View>
+                
+                {/* Inches Picker */}
+                <View style={styles.inlinePickerWrapper}>
+                  <Picker
+                    selectedValue={inches}
+                    onValueChange={(value) => setInches(value)}
+                    style={styles.picker}
+                    itemStyle={styles.pickerItem}
+                  >
+                    {inchesValues.map(value => (
+                      <Picker.Item key={value} label={`${value} in`} value={value} />
+                    ))}
+                  </Picker>
+                </View>
+                
+                {/* Weight Picker */}
+                <View style={styles.inlinePickerWrapper}>
+                  <Picker
+                    selectedValue={weightLbs}
+                    onValueChange={(value) => setWeightLbs(value)}
+                    style={styles.picker}
+                    itemStyle={styles.pickerItem}
+                  >
+                    {lbsValues.map(value => (
+                      <Picker.Item key={value} label={`${value} lbs`} value={value} />
                     ))}
                   </Picker>
                 </View>
               </View>
-            </View>
+            ) : (
+              <View style={styles.inlinePickerRow}>
+                {/* CM Picker */}
+                <View style={styles.inlinePickerWrapperLarge}>
+                  <Picker
+                    selectedValue={cm}
+                    onValueChange={(value) => setCm(value)}
+                    style={styles.picker}
+                    itemStyle={styles.pickerItem}
+                  >
+                    {cmValues.map(value => (
+                      <Picker.Item key={value} label={`${value} cm`} value={value} />
+                    ))}
+                  </Picker>
+                </View>
+                
+                {/* KG Picker */}
+                <View style={styles.inlinePickerWrapperLarge}>
+                  <Picker
+                    selectedValue={weightKg}
+                    onValueChange={(value) => setWeightKg(value)}
+                    style={styles.picker}
+                    itemStyle={styles.pickerItem}
+                  >
+                    {kgValues.map(value => (
+                      <Picker.Item key={value} label={`${value} kg`} value={value} />
+                    ))}
+                  </Picker>
+                </View>
+              </View>
+            )}
 
             {/* BMI Display */}
             {bmi && bmiStatus && (
@@ -310,10 +319,7 @@ const styles = StyleSheet.create({
   },
   pickerContainer: {
     flex: 1,
-    marginTop: 10,
-  },
-  pickerSection: {
-    marginBottom: 35,
+    marginTop: 15,
   },
   pickerLabel: {
     fontSize: 14,
@@ -326,27 +332,25 @@ const styles = StyleSheet.create({
   pickerSublabel: {
     fontSize: 15,
     color: Colors.textSecondary,
-    marginBottom: 16,
+    marginBottom: 20,
   },
-  dualPickerRow: {
+  inlinePickerRow: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 8,
+    marginBottom: 30,
   },
-  singlePickerRow: {
-    flexDirection: 'row',
-  },
-  pickerWrapper: {
+  inlinePickerWrapper: {
     flex: 1,
-    height: 180,
+    height: 140,
     backgroundColor: Colors.backgroundSecondary,
     borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: Colors.borderLight,
   },
-  pickerWrapperFull: {
+  inlinePickerWrapperLarge: {
     flex: 1,
-    height: 180,
+    height: 140,
     backgroundColor: Colors.backgroundSecondary,
     borderRadius: 16,
     overflow: 'hidden',
@@ -355,11 +359,11 @@ const styles = StyleSheet.create({
   },
   picker: {
     width: '100%',
-    height: 180,
+    height: 140,
   },
   pickerItem: {
-    fontSize: 20,
-    height: 180,
+    fontSize: 18,
+    height: 140,
     color: Colors.textPrimary,
     fontWeight: '500',
   },

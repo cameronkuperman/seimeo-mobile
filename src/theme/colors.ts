@@ -9,6 +9,7 @@ export const Colors = {
   black: '#000000',             // Primary CTAs, headers
   charcoal: '#1C1C1E',          // Secondary text
   gray: '#8E8E93',              // Tertiary text  
+  slate: '#64748B',             // Subtle greyish-blue for secondary UI
   lightGray: '#F2F2F7',         // Backgrounds
   white: '#FFFFFF',             // Cards, surfaces
 
@@ -42,6 +43,7 @@ export const Colors = {
   // Borders & Dividers
   border: '#E5E5E7',            // Standard borders
   borderLight: '#F2F2F7',       // Subtle borders
+  borderMedium: '#64748B',      // Slate borders for disabled/secondary
   borderFocus: '#000000',       // Focus state borders
 
   // Special Moments (Use Sparingly)

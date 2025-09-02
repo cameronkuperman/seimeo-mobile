@@ -12,6 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { OnboardingStackParamList } from '../../navigation/OnboardingNavigator';
 import { Colors } from '../../theme/colors';
+import { useOnboarding } from '../../contexts/OnboardingContext';
 
 type NavigationProp = NativeStackNavigationProp<OnboardingStackParamList, 'HealthGoals'>;
 
@@ -57,6 +58,7 @@ const healthGoals: HealthGoal[] = [
 
 const HealthGoalsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
+  const { getNextScreen } = useOnboarding();
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
 
   const toggleGoal = (goalId: string) => {
@@ -68,7 +70,9 @@ const HealthGoalsScreen: React.FC = () => {
   };
 
   const handleContinue = () => {
-    navigation.navigate('MedicalHistory');
+    // Navigate to next screen based on selected path
+    const nextScreen = getNextScreen('HealthGoals');
+    navigation.navigate(nextScreen as any);
   };
 
   return (
