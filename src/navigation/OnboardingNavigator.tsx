@@ -19,6 +19,7 @@ import StressScreen from '../screens/onboarding/StressScreen';
 import SmokingScreen from '../screens/onboarding/SmokingScreen';
 import AlcoholScreen from '../screens/onboarding/AlcoholScreen';
 import FamilyHistoryScreen from '../screens/onboarding/FamilyHistoryScreen';
+import PersonalHealthContextScreen from '../screens/onboarding/PersonalHealthContextScreen';
 import LifestyleScreen from '../screens/onboarding/LifestyleScreen';
 import MentalHealthScreen from '../screens/onboarding/MentalHealthScreen';
 import HealthGoalsScreen from '../screens/onboarding/HealthGoalsScreen';
@@ -46,6 +47,7 @@ export type OnboardingStackParamList = {
   Smoking: undefined;
   Alcohol: undefined;
   FamilyHistory: undefined;
+  PersonalHealthContext: undefined;
   Authentication: undefined;
   Celebration: undefined;
   PlanSelection: undefined;
@@ -110,6 +112,10 @@ const OnboardingNavigator = () => {
       <Stack.Screen 
         name="FamilyHistory" 
         component={FamilyHistoryScreen}
+      />
+      <Stack.Screen 
+        name="PersonalHealthContext" 
+        component={PersonalHealthContextScreen}
       />
       <Stack.Screen 
         name="Lifestyle" 
