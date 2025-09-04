@@ -11,6 +11,7 @@ import GenderScreen from '../screens/onboarding/GenderScreen';
 import HeightWeightScreen from '../screens/onboarding/HeightWeightScreen';
 import CoreVitalsScreen from '../screens/onboarding/CoreVitalsScreen';
 import MedicalHistoryScreen from '../screens/onboarding/MedicalHistoryScreen';
+import MedicalHistoryDetailsScreen from '../screens/onboarding/MedicalHistoryDetailsScreen';
 import MedicationsScreen from '../screens/onboarding/MedicationsScreen';
 import ExerciseScreen from '../screens/onboarding/ExerciseScreen';
 import SleepScreen from '../screens/onboarding/SleepScreen';
@@ -19,6 +20,9 @@ import StressScreen from '../screens/onboarding/StressScreen';
 import SmokingScreen from '../screens/onboarding/SmokingScreen';
 import AlcoholScreen from '../screens/onboarding/AlcoholScreen';
 import FamilyHistoryScreen from '../screens/onboarding/FamilyHistoryScreen';
+import FamilyHistoryDetailsScreen from '../screens/onboarding/FamilyHistoryDetailsScreen';
+import HospitalizationsScreen from '../screens/onboarding/HospitalizationsScreen';
+import AllergiesScreen from '../screens/onboarding/AllergiesScreen';
 import PersonalHealthContextScreen from '../screens/onboarding/PersonalHealthContextScreen';
 import LifestyleScreen from '../screens/onboarding/LifestyleScreen';
 import MentalHealthScreen from '../screens/onboarding/MentalHealthScreen';
@@ -39,7 +43,10 @@ export type OnboardingStackParamList = {
   HeightWeight: undefined;
   HealthGoals: undefined;
   MedicalHistory: undefined;
+  MedicalHistoryDetails: { conditions: any[] };
   Medications: undefined;
+  Hospitalizations: undefined;
+  Allergies: undefined;
   Exercise: undefined;
   Sleep: undefined;
   Diet: undefined;
@@ -47,6 +54,7 @@ export type OnboardingStackParamList = {
   Smoking: undefined;
   Alcohol: undefined;
   FamilyHistory: undefined;
+  FamilyHistoryDetails: { conditions: string[] };
   PersonalHealthContext: undefined;
   Authentication: undefined;
   Celebration: undefined;
@@ -114,6 +122,10 @@ const OnboardingNavigator = () => {
         component={FamilyHistoryScreen}
       />
       <Stack.Screen 
+        name="FamilyHistoryDetails" 
+        component={FamilyHistoryDetailsScreen}
+      />
+      <Stack.Screen 
         name="PersonalHealthContext" 
         component={PersonalHealthContextScreen}
       />
@@ -134,8 +146,20 @@ const OnboardingNavigator = () => {
         component={MedicalHistoryScreen}
       />
       <Stack.Screen 
+        name="MedicalHistoryDetails" 
+        component={MedicalHistoryDetailsScreen}
+      />
+      <Stack.Screen 
         name="Medications" 
         component={MedicationsScreen}
+      />
+      <Stack.Screen 
+        name="Hospitalizations" 
+        component={HospitalizationsScreen}
+      />
+      <Stack.Screen 
+        name="Allergies" 
+        component={AllergiesScreen}
       />
       <Stack.Screen 
         name="Exercise" 

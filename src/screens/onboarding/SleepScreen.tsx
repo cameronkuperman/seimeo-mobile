@@ -39,18 +39,53 @@ const StarsDecoration = () => (
   </Svg>
 );
 
+// Sleep quality icons
+const GoodSleepIcon = () => (
+  <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
+    <Circle cx="12" cy="12" r="10" fill={Colors.health} opacity={0.2} />
+    <Path d="M7 13C7 13 9 15 12 15C15 15 17 13 17 13" stroke={Colors.health} strokeWidth="2" strokeLinecap="round" />
+    <Circle cx="9" cy="9" r="1" fill={Colors.health} />
+    <Circle cx="15" cy="9" r="1" fill={Colors.health} />
+  </Svg>
+);
+
+const OkSleepIcon = () => (
+  <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
+    <Circle cx="12" cy="12" r="10" fill={Colors.amber} opacity={0.2} />
+    <Path d="M8 14H16" stroke={Colors.amber} strokeWidth="2" strokeLinecap="round" />
+    <Circle cx="9" cy="9" r="1" fill={Colors.amber} />
+    <Circle cx="15" cy="9" r="1" fill={Colors.amber} />
+  </Svg>
+);
+
+const PoorSleepIcon = () => (
+  <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
+    <Circle cx="12" cy="12" r="10" fill={Colors.coral} opacity={0.2} />
+    <Path d="M7 16C7 16 9 14 12 14C15 14 17 16 17 16" stroke={Colors.coral} strokeWidth="2" strokeLinecap="round" />
+    <Path d="M9 9L9 11" stroke={Colors.coral} strokeWidth="2" strokeLinecap="round" />
+    <Path d="M15 9L15 11" stroke={Colors.coral} strokeWidth="2" strokeLinecap="round" />
+  </Svg>
+);
+
+const LightbulbIcon = () => (
+  <Svg width={20} height={20} viewBox="0 0 20 20" fill="none">
+    <Path d="M10 2C7.24 2 5 4.24 5 7C5 9.02 6.2 10.77 7.9 11.58V14C7.9 14.55 8.35 15 8.9 15H11.1C11.65 15 12.1 14.55 12.1 14V11.58C13.8 10.77 15 9.02 15 7C15 4.24 12.76 2 10 2Z" fill={Colors.lavender} opacity={0.6} />
+    <Rect x="8" y="16" width="4" height="2" rx="1" fill={Colors.lavender} opacity={0.6} />
+  </Svg>
+);
+
 const SleepScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const { getNextScreen } = useOnboarding();
   const [sleepHours, setSleepHours] = useState(7);
   const [sleepQuality, setSleepQuality] = useState<'good' | 'ok' | 'poor'>('ok');
 
-  const hourOptions = [5, 6, 7, 8, 9];
+  const hourOptions = [9, 8, 7, 6, 5];
 
   const getSleepMessage = () => {
-    if (sleepHours < 6) return "Consider aiming for more sleep 🌙";
-    if (sleepHours === 7 || sleepHours === 8) return "Perfect amount for most adults! ✨";
-    if (sleepHours >= 9) return "Great if you need extra recovery 💤";
+    if (sleepHours < 6) return "Consider aiming for more sleep";
+    if (sleepHours === 7 || sleepHours === 8) return "Perfect amount for most adults!";
+    if (sleepHours >= 9) return "Great if you need extra recovery";
     return "";
   };
 
@@ -125,7 +160,7 @@ const SleepScreen: React.FC = () => {
               onPress={() => setSleepQuality('good')}
               activeOpacity={0.7}
             >
-              <Text style={styles.qualityEmoji}>😴</Text>
+              <GoodSleepIcon />
               <Text style={[
                 styles.qualityText,
                 sleepQuality === 'good' && styles.qualityTextSelected
@@ -143,7 +178,7 @@ const SleepScreen: React.FC = () => {
               onPress={() => setSleepQuality('ok')}
               activeOpacity={0.7}
             >
-              <Text style={styles.qualityEmoji}>😐</Text>
+              <OkSleepIcon />
               <Text style={[
                 styles.qualityText,
                 sleepQuality === 'ok' && styles.qualityTextSelected
@@ -161,7 +196,7 @@ const SleepScreen: React.FC = () => {
               onPress={() => setSleepQuality('poor')}
               activeOpacity={0.7}
             >
-              <Text style={styles.qualityEmoji}>😫</Text>
+              <PoorSleepIcon />
               <Text style={[
                 styles.qualityText,
                 sleepQuality === 'poor' && styles.qualityTextSelected
@@ -175,9 +210,12 @@ const SleepScreen: React.FC = () => {
         {/* Insight Card */}
         {sleepQuality === 'poor' && (
           <View style={[styles.insightCard, { backgroundColor: Colors.lavender + '10' }]}>
-            <Text style={[styles.insightText, { color: Colors.lavender }]}>
-              💡 Poor sleep quality can affect your health. We'll help you track patterns.
-            </Text>
+            <View style={styles.insightContent}>
+              <LightbulbIcon />
+              <Text style={[styles.insightText, { color: Colors.lavender }]}>
+                Poor sleep quality can affect your health. We'll help you track patterns.
+              </Text>
+            </View>
           </View>
         )}
 
@@ -333,14 +371,11 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
     transform: [{ scale: 1.02 }],
   },
-  qualityEmoji: {
-    fontSize: 28,
-    marginBottom: 8,
-  },
   qualityText: {
     fontSize: 15,
     fontWeight: '500',
     color: Colors.textPrimary,
+    marginTop: 8,
   },
   qualityTextSelected: {
     color: Colors.white,
@@ -350,9 +385,15 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 24,
   },
+  insightContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   insightText: {
     fontSize: 14,
     lineHeight: 20,
+    marginLeft: 8,
+    flex: 1,
   },
   buttonContainer: {
     marginTop: 'auto',

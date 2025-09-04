@@ -34,6 +34,7 @@ const navigationFlows: Record<OnboardingPath, string[]> = {
     'HeightWeight',
     'MedicalHistory',
     'Medications',
+    'Hospitalizations',
     'Exercise',
     'Sleep',
     'Diet',
@@ -56,6 +57,8 @@ const navigationFlows: Record<OnboardingPath, string[]> = {
     'HeightWeight',
     'MedicalHistory',
     'Medications',
+    'Hospitalizations',
+    'Allergies',
     'Exercise',
     'Sleep',
     'Diet',
@@ -63,6 +66,7 @@ const navigationFlows: Record<OnboardingPath, string[]> = {
     'Smoking',
     'Alcohol',
     'FamilyHistory',
+    'FamilyHistoryDetails',
     'PersonalHealthContext',
     'HealthGoals',
     'Authentication',
@@ -77,6 +81,16 @@ export const OnboardingProvider: React.FC<{ children: ReactNode }> = ({ children
   const [selectedPath, setSelectedPath] = useState<OnboardingPath>('regular');
 
   const getNextScreen = (currentScreen: string): string => {
+    // Special handling for detail screens that aren't in the main flow
+    if (currentScreen === 'MedicalHistoryDetails') {
+      // After medical history details, continue based on path
+      const flow = navigationFlows[selectedPath];
+      const medHistoryIndex = flow.indexOf('MedicalHistory');
+      if (medHistoryIndex !== -1 && medHistoryIndex < flow.length - 1) {
+        return flow[medHistoryIndex + 1];
+      }
+    }
+    
     const flow = navigationFlows[selectedPath];
     const currentIndex = flow.indexOf(currentScreen);
     

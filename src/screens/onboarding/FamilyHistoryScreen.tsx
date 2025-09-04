@@ -168,8 +168,18 @@ const FamilyHistoryScreen: React.FC = () => {
 
   const handleContinue = () => {
     // Store family history and navigate
-    const nextScreen = getNextScreen('FamilyHistory');
-    navigation.navigate(nextScreen as any);
+    if (selectedConditions.size > 0 || customConditions.length > 0) {
+      const allConditions = [
+        ...Array.from(selectedConditions).map(id => 
+          familyConditions.find(c => c.id === id)?.name || id
+        ),
+        ...customConditions
+      ];
+      navigation.navigate('FamilyHistoryDetails' as any, { conditions: allConditions });
+    } else {
+      const nextScreen = getNextScreen('FamilyHistory');
+      navigation.navigate(nextScreen as any);
+    }
   };
 
   const handleSkip = () => {
