@@ -6,7 +6,7 @@ import React from 'react';
 import { StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
-import OnboardingNavigator from './src/navigation/OnboardingNavigator';
+import RootNavigator from './src/navigation/RootNavigator';
 import { OnboardingProvider } from './src/contexts/OnboardingContext';
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
       <StatusBar barStyle="dark-content" backgroundColor="#FAFAFA" />
       <NavigationContainer>
         <OnboardingProvider>
-          <OnboardingNavigator />
+          <RootNavigator />
         </OnboardingProvider>
       </NavigationContainer>
     </SafeAreaProvider>
