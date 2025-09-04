@@ -7,6 +7,7 @@ import {
   Animated,
   Dimensions,
   Platform,
+  TouchableOpacity,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -62,6 +63,14 @@ const HeroWelcomeScreen: React.FC = () => {
     console.log('Sign in pressed');
   };
 
+  const handleSkip = () => {
+    // Navigate directly to main app (dashboard)
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'MainApp' as any }],
+    });
+  };
+
   const rotation = rotateAnim.interpolate({
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg'],
@@ -69,6 +78,15 @@ const HeroWelcomeScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+        {/* Skip Button */}
+        <TouchableOpacity 
+          style={styles.skipButton}
+          onPress={handleSkip}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.skipText}>Skip to Dashboard</Text>
+        </TouchableOpacity>
+        
         <Animated.View
           style={[
             styles.content,
@@ -266,6 +284,21 @@ const styles = StyleSheet.create({
   },
   secondaryButton: {
     alignSelf: 'center',
+  },
+  skipButton: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 60 : 40,
+    right: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: 'rgba(0,0,0,0.08)',
+    borderRadius: 20,
+    zIndex: 1,
+  },
+  skipText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: Colors.textSecondary,
   },
 });
 

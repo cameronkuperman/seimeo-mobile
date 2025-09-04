@@ -8,7 +8,10 @@ import {
   Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { Colors } from '../../theme/colors';
+import { Typography } from '../../theme/typography';
+import StatusBadge from './StatusBadge';
 
 interface InsightCardProps {
   title: string;
@@ -21,7 +24,7 @@ interface InsightCardProps {
 const InsightCard: React.FC<InsightCardProps> = ({
   title,
   description,
-  actionText = 'Take action',
+  actionText = 'Take preventive action',
   riskLevel = 'medium',
   onAction,
 }) => {
@@ -54,16 +57,16 @@ const InsightCard: React.FC<InsightCardProps> = ({
     }
   };
 
-  const getBadgeColor = () => {
+  const getActionColor = () => {
     switch (riskLevel) {
       case 'high':
         return Colors.coral;
       case 'medium':
-        return Colors.amber;
+        return '#FF9800';
       case 'low':
         return Colors.ocean;
       default:
-        return Colors.amber;
+        return '#FF9800';
     }
   };
 
@@ -78,21 +81,18 @@ const InsightCard: React.FC<InsightCardProps> = ({
       ]}
     >
       <View style={styles.card}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.headerText}>INSIGHT</Text>
-          <View style={[styles.badge, { backgroundColor: getBadgeColor() }]} />
+        <StatusBadge type="insight" />
+        
+        <View style={styles.content}>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.description}>{description}</Text>
         </View>
 
-        {/* Content */}
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.description}>{description}</Text>
-
-        {/* Action */}
         <TouchableOpacity onPress={handleAction} style={styles.actionButton}>
-          <Text style={[styles.actionText, { color: getBadgeColor() }]}>
-            {actionText} →
+          <Text style={[styles.actionText, { color: getActionColor() }]}>
+            {actionText}
           </Text>
+          <Icon name="arrow-forward" size={16} color={getActionColor()} />
         </TouchableOpacity>
       </View>
     </Animated.View>
@@ -101,62 +101,46 @@ const InsightCard: React.FC<InsightCardProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 16,
-    marginBottom: 16,
+    paddingHorizontal: 20,
+    marginBottom: 20,
   },
   card: {
     backgroundColor: Colors.white,
-    borderRadius: 16,
-    padding: 20,
+    borderRadius: 20,
+    padding: 24,
     ...Platform.select({
       ios: {
-        shadowColor: Colors.shadowMedium,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.12,
-        shadowRadius: 12,
+        shadowColor: 'rgba(0,0,0,0.03)',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 1,
+        shadowRadius: 6,
       },
       android: {
-        elevation: 4,
+        elevation: 1,
       },
     }),
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  headerText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: Colors.textSecondary,
-    letterSpacing: 0.5,
-  },
-  badge: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    marginLeft: 8,
+  content: {
+    marginTop: 16,
   },
   title: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: Colors.textPrimary,
+    ...Typography.h3,
+    fontSize: 20,
+    fontWeight: '700',
     marginBottom: 6,
-    letterSpacing: -0.2,
   },
   description: {
-    fontSize: 15,
+    ...Typography.body,
     color: Colors.textSecondary,
-    lineHeight: 20,
-    marginBottom: 12,
   },
   actionButton: {
-    paddingVertical: 4,
+    marginTop: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   actionText: {
-    fontSize: 15,
-    fontWeight: '600',
-    letterSpacing: -0.2,
+    ...Typography.bodyBold,
+    marginRight: 4,
   },
 });
 

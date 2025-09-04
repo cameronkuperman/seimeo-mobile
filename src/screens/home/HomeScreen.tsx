@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   ScrollView,
   TouchableOpacity,
   Platform,
@@ -55,13 +54,13 @@ const HomeScreen: React.FC = () => {
   });
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         bounces={true}
       >
-        {/* Unified Gradient Header with Score */}
+        {/* Gradient Header that scrolls with content */}
         <GradientHeaderCard 
           score={85}
           weeklyChange={2}
@@ -96,14 +95,14 @@ const HomeScreen: React.FC = () => {
 
       {/* Floating Oracle Button */}
       <OracleFloatingButton />
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F9FA', // Slight gray background
+    backgroundColor: '#FAFBFC', // Olivia-style subtle gray
   },
   scrollContent: {
     flexGrow: 1,

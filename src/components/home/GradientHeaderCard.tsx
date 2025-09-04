@@ -1,14 +1,17 @@
 import React, { useEffect, useRef } from 'react';
 import {
-  View,
   Text,
   StyleSheet,
   Animated,
   Platform,
   Dimensions,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { Colors } from '../../theme/colors';
+import { HeaderTypography } from '../../theme/typography';
 
 interface GradientHeaderCardProps {
   score?: number;
@@ -16,7 +19,7 @@ interface GradientHeaderCardProps {
   date?: Date;
 }
 
-const { width } = Dimensions.get('window');
+const { width: screenWidth } = Dimensions.get('window');
 
 const GradientHeaderCard: React.FC<GradientHeaderCardProps> = ({
   score = 85,
@@ -25,7 +28,7 @@ const GradientHeaderCard: React.FC<GradientHeaderCardProps> = ({
 }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(-20)).current;
-  const progressAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.95)).current;
 
   useEffect(() => {
     // Entrance animations
@@ -41,11 +44,11 @@ const GradientHeaderCard: React.FC<GradientHeaderCardProps> = ({
         tension: 40,
         useNativeDriver: true,
       }),
-      Animated.timing(progressAnim, {
-        toValue: score / 100,
-        duration: 1000,
-        delay: 300,
-        useNativeDriver: false,
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 5,
+        tension: 40,
+        useNativeDriver: true,
       }),
     ]).start();
   }, []);
@@ -54,11 +57,6 @@ const GradientHeaderCard: React.FC<GradientHeaderCardProps> = ({
     weekday: 'long',
     month: 'long',
     day: 'numeric',
-  });
-
-  const progressWidth = progressAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0%', '100%'],
   });
 
   return (
@@ -72,45 +70,58 @@ const GradientHeaderCard: React.FC<GradientHeaderCardProps> = ({
       ]}
     >
       <LinearGradient
-        colors={[Colors.ocean, Colors.lavender]}
+        colors={['#6B9AE2', '#8B7FBA']}
         start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0.5 }}
+        end={{ x: 1, y: 0.8 }}
         style={styles.gradientBackground}
       >
+        <View style={styles.statusBarSpace} />
+        
         {/* Date */}
-        <Text style={styles.dateText}>{dateString}</Text>
+        <Text style={styles.dateText}>
+          {dateString.toUpperCase()}
+        </Text>
 
         {/* Score */}
-        <Text style={styles.scoreNumber}>{score}</Text>
-        <Text style={styles.scoreLabel}>Your health score</Text>
+        <Animated.Text 
+          style={[
+            styles.scoreNumber,
+            { transform: [{ scale: scaleAnim }] }
+          ]}
+        >
+          {score}
+        </Animated.Text>
+        
+        <Text style={styles.scoreLabel}>
+          Your health score
+        </Text>
 
-        {/* Progress Bar */}
-        <View style={styles.progressContainer}>
-          <View style={styles.progressBackground}>
-            <Animated.View
-              style={[
-                styles.progressBar,
-                {
-                  width: progressWidth,
-                },
-              ]}
-            >
-              <LinearGradient
-                colors={['rgba(255,255,255,0.9)', 'rgba(255,255,255,0.7)']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.progressGradient}
+        {/* Trend indicator - always render container for consistent spacing */}
+        <View style={styles.trendContainer}>
+          {weeklyChange !== 0 && (
+            <>
+              <Icon 
+                name={weeklyChange > 0 ? "arrow-up" : "arrow-down"} 
+                size={16} 
+                color={Colors.white} 
               />
-            </Animated.View>
-          </View>
+              <Text style={styles.trendText}>
+                {Math.abs(weeklyChange)} from last week
+              </Text>
+            </>
+          )}
         </View>
 
-        {/* Weekly Change */}
-        {weeklyChange !== 0 && (
-          <Text style={styles.changeText}>
-            {weeklyChange > 0 ? '↑' : '↓'} {Math.abs(weeklyChange)} from last week
-          </Text>
-        )}
+        {/* CTA Button with wrapper for spacing */}
+        <View style={styles.ctaWrapper}>
+          <TouchableOpacity style={styles.ctaButton} activeOpacity={0.8}>
+            <Text style={styles.ctaText}>View insights</Text>
+            <Icon name="arrow-forward" size={20} color={Colors.white} />
+          </TouchableOpacity>
+        </View>
+        
+        {/* Extra spacer to ensure padding */}
+        <View style={{ height: 15 }} />
       </LinearGradient>
     </Animated.View>
   );
@@ -118,63 +129,69 @@ const GradientHeaderCard: React.FC<GradientHeaderCardProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: width,
-    marginLeft: -16, // Negative margin to go edge-to-edge
-    marginRight: -16,
-  },
-  gradientBackground: {
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingBottom: 30,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-  },
-  dateText: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: 'rgba(255,255,255,0.9)',
-    marginBottom: 20,
-    letterSpacing: 0.3,
-  },
-  scoreNumber: {
-    fontSize: 56,
-    fontWeight: '700',
-    color: Colors.white,
-    letterSpacing: -2,
-    marginBottom: 4,
-    textShadowColor: 'rgba(0,0,0,0.1)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
-  },
-  scoreLabel: {
-    fontSize: 17,
-    fontWeight: '500',
-    color: 'rgba(255,255,255,0.95)',
-    marginBottom: 20,
-    letterSpacing: -0.2,
-  },
-  progressContainer: {
-    width: '100%',
-    paddingHorizontal: 40,
+    width: screenWidth,
+    marginTop: -50, // Pull up to start from top
     marginBottom: 12,
-  },
-  progressBackground: {
-    height: 12,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    borderRadius: 6,
     overflow: 'hidden',
   },
-  progressBar: {
-    height: '100%',
-    borderRadius: 6,
+  gradientBackground: {
+    width: screenWidth,
+    paddingTop: 0,
+    paddingBottom: 30,
+    alignItems: 'center',
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
   },
-  progressGradient: {
-    flex: 1,
-    borderRadius: 6,
+  statusBarSpace: {
+    height: Platform.OS === 'ios' ? 110 : 85,
   },
-  changeText: {
-    fontSize: 15,
+  dateText: {
+    ...HeaderTypography.date,
+    marginBottom: 12,
+  },
+  scoreNumber: {
+    ...HeaderTypography.score,
+    textShadowColor: 'rgba(0,0,0,0.15)',
+    textShadowOffset: { width: 0, height: 3 },
+    textShadowRadius: 8,
+    marginBottom: 2,
+  },
+  scoreLabel: {
+    ...HeaderTypography.scoreLabel,
+    marginTop: 0,
+    marginBottom: 8,
+  },
+  ctaWrapper: {
+    paddingHorizontal: 20,
+    marginBottom: 12,
+  },
+  ctaButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 24,
+  },
+  ctaText: {
+    fontSize: 16,
     fontWeight: '600',
-    color: '#A8E6A3', // Light green for positive change
+    color: Colors.white,
+    marginRight: 8,
+    letterSpacing: -0.2,
+  },
+  trendContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    minHeight: 20,
+    marginBottom: 10,
+    gap: 6,
+  },
+  trendText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: 'rgba(255,255,255,0.9)',
     letterSpacing: -0.2,
   },
 });

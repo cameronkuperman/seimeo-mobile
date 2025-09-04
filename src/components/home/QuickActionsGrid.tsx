@@ -8,6 +8,7 @@ import {
   Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { Colors } from '../../theme/colors';
 
 interface ActionItem {
@@ -28,10 +29,10 @@ const QuickActionsGrid: React.FC = () => {
   ]).current;
 
   const actions: ActionItem[] = [
-    { id: 'quick', icon: '⚡', label: 'Quick', route: 'QuickScan', color: Colors.mint },
-    { id: 'photo', icon: '📷', label: 'Photo', route: 'PhotoAnalysis', color: Colors.ocean },
-    { id: 'deep', icon: '🧠', label: 'Deep', route: 'DeepDive', color: Colors.lavender },
-    { id: 'log', icon: '➕', label: 'Log', route: 'SymptomLog', color: Colors.coral },
+    { id: 'quick', icon: 'flash-outline', label: 'Quick', route: 'QuickScan', color: Colors.mint },
+    { id: 'photo', icon: 'camera-outline', label: 'Photo', route: 'PhotoAnalysis', color: Colors.ocean },
+    { id: 'deep', icon: 'pulse-outline', label: 'Deep', route: 'DeepDive', color: Colors.lavender },
+    { id: 'log', icon: 'add-circle-outline', label: 'Log', route: 'SymptomLog', color: Colors.coral },
   ];
 
   const handlePressIn = (index: number) => {
@@ -75,7 +76,7 @@ const QuickActionsGrid: React.FC = () => {
                 activeOpacity={0.9}
               >
                 <View style={[styles.iconContainer, { backgroundColor: action.color + '15' }]}>
-                  <Text style={styles.icon}>{action.icon}</Text>
+                  <Icon name={action.icon} size={28} color={action.color} />
                 </View>
                 <Text style={styles.label}>{action.label}</Text>
               </TouchableOpacity>
@@ -89,31 +90,31 @@ const QuickActionsGrid: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 16,
-    marginTop: 20,
-    marginBottom: 16,
+    paddingHorizontal: 20,
+    marginTop: 0,
+    marginBottom: 20,
   },
   card: {
     backgroundColor: Colors.white,
-    borderRadius: 16,
-    padding: 20,
+    borderRadius: 20,
+    padding: 24,
     ...Platform.select({
       ios: {
-        shadowColor: Colors.shadowMedium,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.12,
-        shadowRadius: 12,
+        shadowColor: 'rgba(0,0,0,0.03)',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 1,
+        shadowRadius: 6,
       },
       android: {
-        elevation: 4,
+        elevation: 1,
       },
     }),
   },
   sectionTitle: {
-    fontSize: 17,
-    fontWeight: '600',
+    fontSize: 18,
+    fontWeight: '700',
     color: Colors.textPrimary,
-    marginBottom: 16,
+    marginBottom: 20,
     letterSpacing: -0.3,
   },
   grid: {
@@ -128,26 +129,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 16,
+    width: 60,
+    height: 60,
+    borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 8,
-    ...Platform.select({
-      ios: {
-        shadowColor: Colors.shadowLight,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 2,
-      },
-    }),
-  },
-  icon: {
-    fontSize: 24,
+    marginBottom: 10,
   },
   label: {
     fontSize: 13,

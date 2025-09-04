@@ -4,10 +4,9 @@ import {
   StyleSheet,
   Animated,
   Platform,
-  Text,
-  View,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { Colors } from '../../theme/colors';
 
 const OracleFloatingButton: React.FC = () => {
@@ -82,13 +81,8 @@ const OracleFloatingButton: React.FC = () => {
         onPress={handlePress}
         activeOpacity={0.9}
       >
-        <Text style={styles.buttonText}>?</Text>
+        <Icon name="chatbubble-ellipses-outline" size={24} color={Colors.white} />
       </TouchableOpacity>
-      
-      {/* Label */}
-      <View style={styles.labelContainer}>
-        <Text style={styles.label}>Quick Question</Text>
-      </View>
     </Animated.View>
   );
 };
@@ -96,57 +90,28 @@ const OracleFloatingButton: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 100 : 80,
+    bottom: Platform.OS === 'ios' ? 60 : 50,
     right: 20,
     zIndex: 1000,
   },
   button: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: Colors.coral,
     justifyContent: 'center',
     alignItems: 'center',
     ...Platform.select({
       ios: {
         shadowColor: Colors.coral,
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.2,
-        shadowRadius: 6,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
       },
       android: {
-        elevation: 6,
+        elevation: 8,
       },
     }),
-  },
-  buttonText: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: Colors.white,
-  },
-  labelContainer: {
-    position: 'absolute',
-    right: 56,
-    backgroundColor: Colors.white,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-    ...Platform.select({
-      ios: {
-        shadowColor: Colors.shadowLight,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 2,
-      },
-    }),
-  },
-  label: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: Colors.textSecondary,
   },
 });
 

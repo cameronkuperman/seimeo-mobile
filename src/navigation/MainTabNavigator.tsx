@@ -2,6 +2,7 @@ import React from 'react';
 import { View, TouchableOpacity, StyleSheet, Text, Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { Colors } from '../theme/colors';
 import HomeScreen from '../screens/home/HomeScreen';
 import TimelineScreen from '../screens/timeline/TimelineScreen';
@@ -50,13 +51,13 @@ const CustomTabBar = ({ state, descriptors, navigation }: any) => {
         }
 
         // Icon mapping
-        const getIcon = () => {
+        const getIconName = () => {
           switch (route.name) {
-            case 'Home': return '🏠';
-            case 'Timeline': return '📊';
-            case 'Reports': return '📄';
-            case 'Profile': return '👤';
-            default: return '○';
+            case 'Home': return 'home-outline';
+            case 'Timeline': return 'calendar-outline';
+            case 'Reports': return 'document-text-outline';
+            case 'Profile': return 'person-outline';
+            default: return 'ellipse-outline';
           }
         };
 
@@ -67,13 +68,15 @@ const CustomTabBar = ({ state, descriptors, navigation }: any) => {
             style={styles.tabItem}
             activeOpacity={0.8}
           >
-            <Text style={[styles.tabIcon, isFocused && styles.tabIconFocused]}>
-              {getIcon()}
-            </Text>
+            <Icon
+              name={getIconName()}
+              size={24}
+              color={isFocused ? Colors.textPrimary : Colors.textTertiary}
+              style={[styles.tabIcon, isFocused && styles.tabIconFocused]}
+            />
             <Text style={[styles.tabLabel, isFocused && styles.tabLabelFocused]}>
               {label}
             </Text>
-            {isFocused && <View style={styles.activeIndicator} />}
           </TouchableOpacity>
         );
       })}
@@ -151,7 +154,6 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   tabIcon: {
-    fontSize: 20,
     marginBottom: 4,
   },
   tabIconFocused: {
@@ -165,14 +167,6 @@ const styles = StyleSheet.create({
   tabLabelFocused: {
     color: Colors.textPrimary,
     fontWeight: '600',
-  },
-  activeIndicator: {
-    position: 'absolute',
-    bottom: 0,
-    width: '60%',
-    height: 3,
-    backgroundColor: Colors.black,
-    borderRadius: 1.5,
   },
   addButtonContainer: {
     flex: 1,
