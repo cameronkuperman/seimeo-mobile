@@ -15,6 +15,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { OnboardingStackParamList } from '../../navigation/OnboardingNavigator';
 import { Colors } from '../../theme/colors';
 import { useOnboarding } from '../../contexts/OnboardingContext';
+import { Haptics } from '../../utils/haptics';
 
 type NavigationProp = NativeStackNavigationProp<OnboardingStackParamList, 'Gender'>;
 
@@ -27,6 +28,7 @@ const GenderScreen: React.FC = () => {
 
   const handleContinue = () => {
     if (selectedGender) {
+      Haptics.light();
       // Store gender data for 3D model assignment
       // For 'other' options, use neutral/unisex 3D model
       const genderData = {
@@ -94,6 +96,7 @@ const GenderScreen: React.FC = () => {
                   selectedGender === option.value && styles.optionCardSelected,
                 ]}
                 onPress={() => {
+                  Haptics.selection();
                   setSelectedGender(option.value);
                   if (option.value !== 'other') {
                     setOtherGenderOption(null);
@@ -129,7 +132,10 @@ const GenderScreen: React.FC = () => {
                     styles.subOptionCard,
                     otherGenderOption === 'not_specify' && styles.subOptionCardSelected,
                   ]}
-                  onPress={() => setOtherGenderOption('not_specify')}
+                  onPress={() => {
+                    Haptics.selection();
+                    setOtherGenderOption('not_specify');
+                  }}
                   activeOpacity={0.7}
                 >
                   <Text style={[
@@ -153,7 +159,10 @@ const GenderScreen: React.FC = () => {
                     styles.subOptionCard,
                     otherGenderOption === 'non_binary' && styles.subOptionCardSelected,
                   ]}
-                  onPress={() => setOtherGenderOption('non_binary')}
+                  onPress={() => {
+                    Haptics.selection();
+                    setOtherGenderOption('non_binary');
+                  }}
                   activeOpacity={0.7}
                 >
                   <Text style={[
@@ -177,7 +186,10 @@ const GenderScreen: React.FC = () => {
                     styles.subOptionCard,
                     otherGenderOption === 'custom' && styles.subOptionCardSelected,
                   ]}
-                  onPress={() => setOtherGenderOption('custom')}
+                  onPress={() => {
+                    Haptics.selection();
+                    setOtherGenderOption('custom');
+                  }}
                   activeOpacity={0.7}
                 >
                   <Text style={[
@@ -372,13 +384,15 @@ const styles = StyleSheet.create({
     borderColor: Colors.ocean,
   },
   footer: {
-    paddingTop: 30,
-    paddingBottom: Platform.OS === 'ios' ? 50 : 40,
+    position: 'absolute',
+    bottom: 45,
+    left: 20,
+    right: 20,
   },
   continueButton: {
     height: 58,
     backgroundColor: Colors.black,
-    borderRadius: 29,
+    borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
     ...Platform.select({

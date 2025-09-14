@@ -128,38 +128,7 @@ const ProfileScreen: React.FC = () => {
     }, 2000);
   };
 
-  const renderHeader = () => (
-    <LinearGradient
-      colors={['#000000', '#1A1A1C']}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 0.5, y: 1 }}
-      style={styles.gradientHeader}
-    >
-      <View style={styles.safeAreaTop} />
-      <View style={styles.headerContent}>
-        {/* Settings Button */}
-        <TouchableOpacity style={styles.settingsButton} activeOpacity={0.7}>
-          <Icon name="settings-outline" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-
-        {/* Subscription + Credits Pill - Right aligned */}
-        <TouchableOpacity 
-          style={styles.subscriptionPill} 
-          activeOpacity={0.8}
-          onPress={() => setShowCreditsDetail(true)}
-        >
-          <Text style={styles.planText}>{mockUserData.plan}</Text>
-          <View style={styles.creditsDot} />
-          <Text style={styles.creditsText}>{mockUserData.credits}</Text>
-        </TouchableOpacity>
-      </View>
-      
-      {/* User Name - Centered with more space */}
-      <View style={styles.nameRow}>
-        <Text style={styles.userName}>{mockUserData.name}</Text>
-      </View>
-    </LinearGradient>
-  );
+  // Removed old header - will create new one inline
 
   const renderPerspectiveLens = () => {
     const perspectives = ['clinical', 'lifestyle', 'risk'] as const;
@@ -468,10 +437,11 @@ const ProfileScreen: React.FC = () => {
     <View style={styles.container}>
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={styles.scrollViewContent}
+        contentContainerStyle={styles.scrollContentContainer}
         showsVerticalScrollIndicator={false}
         automaticallyAdjustContentInsets={false}
         contentInsetAdjustmentBehavior="never"
+        bounces={true}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -480,8 +450,47 @@ const ProfileScreen: React.FC = () => {
           />
         }
       >
-        {renderHeader()}
-        <View style={styles.scrollContent}>
+        {/* Full Width Header - Same approach as HomeScreen */}
+        <View style={styles.headerContainer}>
+          <LinearGradient
+            colors={['#000000', '#1A1A1C']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0.5, y: 1 }}
+            style={styles.gradientHeader}
+          >
+            {/* Extension above for pull-to-refresh */}
+            <View style={styles.gradientExtension}>
+              <LinearGradient
+                colors={['#000000', '#1A1A1C']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0.5, y: 1 }}
+                style={{ flex: 1 }}
+              />
+            </View>
+            <View style={styles.statusBarSpace} />
+            <View style={styles.headerContent}>
+              <TouchableOpacity style={styles.settingsButton} activeOpacity={0.7}>
+                <Icon name="settings-outline" size={24} color="#FFFFFF" />
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.subscriptionPill} 
+                activeOpacity={0.8}
+                onPress={() => setShowCreditsDetail(true)}
+              >
+                <Text style={styles.planText}>{mockUserData.plan}</Text>
+                <View style={styles.creditsDot} />
+                <Text style={styles.creditsText}>{mockUserData.credits}</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.nameRow}>
+              <Text style={styles.userName}>{mockUserData.name}</Text>
+              <Text style={styles.memberSince}>Member since {mockUserData.memberSince}</Text>
+            </View>
+          </LinearGradient>
+        </View>
+        
+        {/* Content with padding */}
+        <View style={styles.contentPadding}>
           {renderHealthSummary()}
           {renderQuickInfoGrid()}
           {renderMedicalSnapshot()}
@@ -498,29 +507,33 @@ const ProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FAFBFC',
+    backgroundColor: '#000000', // Black background for overscroll
+  },
+  scrollView: {
+    flex: 1,
+    backgroundColor: '#FAFBFC', // Keep content area light
+  },
+  scrollContentContainer: {
+    flexGrow: 1,
+    paddingBottom: 100,
+  },
+  headerContainer: {
+    width: screenWidth,
+    marginBottom: 12,
+    marginTop: -200, // Pull up to extend above screen
   },
   gradientHeader: {
-    width: screenWidth + 40,
-    marginHorizontal: -20,
-    paddingBottom: 40,
-    borderBottomLeftRadius: 32,
-    borderBottomRightRadius: 32,
-    overflow: 'hidden',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 12,
-      },
-      android: {
-        elevation: 8,
-      },
-    }),
+    width: screenWidth,
+    paddingBottom: 35,
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8,
+    minHeight: 420, // Increased to account for extension
   },
-  safeAreaTop: {
-    height: Platform.OS === 'ios' ? 60 : 35,
+  gradientExtension: {
+    height: 200, // Extra space above visible area
+  },
+  statusBarSpace: {
+    height: Platform.OS === 'ios' ? 50 : 30,
   },
   headerContent: {
     flexDirection: 'row',
@@ -533,17 +546,6 @@ const styles = StyleSheet.create({
   settingsButton: {
     padding: 8,
     marginLeft: -8,
-  },
-  nameRow: {
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingBottom: 8,
-  },
-  userName: {
-    fontSize: 26,
-    fontWeight: '800',
-    color: '#FFFFFF',
-    letterSpacing: -0.5,
   },
   subscriptionPill: {
     flexDirection: 'row',
@@ -572,15 +574,27 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.95)',
     letterSpacing: -0.2,
   },
-  scrollView: {
-    flex: 1,
-  },
-  scrollViewContent: {
+  nameRow: {
+    alignItems: 'center',
     paddingHorizontal: 20,
+    marginTop: -5,
   },
-  scrollContent: {
-    paddingTop: 20,
-    paddingBottom: 100,
+  userName: {
+    fontSize: 26,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    letterSpacing: -0.5,
+    marginBottom: 4,
+  },
+  memberSince: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: 'rgba(255,255,255,0.8)',
+    letterSpacing: -0.2,
+  },
+  contentPadding: {
+    paddingHorizontal: 20,
+    paddingTop: 8,
   },
   card: {
     backgroundColor: Colors.white,

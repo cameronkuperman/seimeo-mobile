@@ -575,6 +575,7 @@ const styles = StyleSheet.create({
   },
   continueButton: {
     width: '100%',
+    borderRadius: 30,
   },
 });
 

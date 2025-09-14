@@ -44,7 +44,12 @@ const AssessmentCTA: React.FC = () => {
   };
 
   const handlePhotoAnalysis = () => {
-    navigation.navigate('PhotoAnalysis' as never);
+    const parentNav = navigation.getParent();
+    if (parentNav) {
+      parentNav.navigate('PhotoAnalysis' as never);
+    } else {
+      navigation.navigate('PhotoAnalysis' as never);
+    }
   };
 
   return (

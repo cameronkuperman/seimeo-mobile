@@ -5,6 +5,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { OnboardingStackParamList } from '../../navigation/OnboardingNavigator';
 import { Button } from '../../components/ui/Button';
 import { Colors } from '../../theme/colors';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { Haptics } from '../../utils/haptics';
 
 type NavigationProp = NativeStackNavigationProp<OnboardingStackParamList, 'WelcomeHome'>;
 type RouteProps = RouteProp<OnboardingStackParamList, 'WelcomeHome'>;
@@ -31,10 +33,14 @@ const WelcomeHomeScreen = () => {
         tension: 10,
         useNativeDriver: true,
       }),
-    ]).start();
+    ]).start(() => {
+      // Play success haptic when animation completes
+      Haptics.success();
+    });
   }, []);
 
   const handleContinue = () => {
+    Haptics.light();
     // Navigate to main app dashboard
     navigation.getParent()?.reset({
       index: 0,
@@ -56,7 +62,7 @@ const WelcomeHomeScreen = () => {
         >
           {/* Success Icon */}
           <View style={styles.successIcon}>
-            <Text style={styles.successEmoji}>🎉</Text>
+            <Icon name="checkmark-circle" size={48} color={Colors.health} />
           </View>
 
           {/* Welcome Message */}
@@ -68,15 +74,21 @@ const WelcomeHomeScreen = () => {
           {/* Feature Highlights */}
           <View style={styles.features}>
             <View style={styles.featureItem}>
-              <Text style={styles.featureIcon}>🩺</Text>
+              <View style={styles.featureIconContainer}>
+                <Icon name="medkit-outline" size={28} color={Colors.health} />
+              </View>
               <Text style={styles.featureText}>AI Health Analysis</Text>
             </View>
             <View style={styles.featureItem}>
-              <Text style={styles.featureIcon}>📊</Text>
+              <View style={styles.featureIconContainer}>
+                <Icon name="stats-chart" size={28} color={Colors.ocean} />
+              </View>
               <Text style={styles.featureText}>Smart Tracking</Text>
             </View>
             <View style={styles.featureItem}>
-              <Text style={styles.featureIcon}>💬</Text>
+              <View style={styles.featureIconContainer}>
+                <Icon name="chatbubbles-outline" size={28} color={Colors.lavender} />
+              </View>
               <Text style={styles.featureText}>24/7 Dr. Mei</Text>
             </View>
           </View>
@@ -113,13 +125,10 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: Colors.health + '20',
+    backgroundColor: Colors.health + '15',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 24,
-  },
-  successEmoji: {
-    fontSize: 40,
   },
   title: {
     fontSize: 32,
@@ -145,8 +154,13 @@ const styles = StyleSheet.create({
   featureItem: {
     alignItems: 'center',
   },
-  featureIcon: {
-    fontSize: 32,
+  featureIconContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: Colors.backgroundSecondary,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 8,
   },
   featureText: {
@@ -157,6 +171,7 @@ const styles = StyleSheet.create({
   continueButton: {
     width: '100%',
     marginBottom: 16,
+    borderRadius: 30,
   },
 });
 

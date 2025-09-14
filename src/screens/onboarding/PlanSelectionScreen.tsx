@@ -15,6 +15,7 @@ import { Button } from '../../components/ui/Button';
 import { Colors } from '../../theme/colors';
 import { useOnboarding } from '../../contexts/OnboardingContext';
 import Svg, { Path, Circle, Rect, G } from 'react-native-svg';
+import { Haptics } from '../../utils/haptics';
 
 type NavigationProp = NativeStackNavigationProp<OnboardingStackParamList, 'PlanSelection'>;
 
@@ -97,6 +98,7 @@ const PlanSelectionScreen: React.FC = () => {
   ];
 
   const handleContinue = () => {
+    Haptics.light();
     // Store selected plan
     // If premium, navigate to AppleHealthSync, otherwise skip to WelcomeHome
     const nextScreen = selectedPlan === 'premium' ? 'AppleHealthSync' : 'WelcomeHome';
@@ -122,7 +124,10 @@ const PlanSelectionScreen: React.FC = () => {
               styles.premiumCard,
               selectedPlan === 'premium' && styles.planCardSelected
             ]}
-            onPress={() => setSelectedPlan('premium')}
+            onPress={() => {
+              Haptics.selection();
+              setSelectedPlan('premium');
+            }}
             activeOpacity={0.9}
           >
             {/* Most Popular Badge */}
@@ -168,7 +173,10 @@ const PlanSelectionScreen: React.FC = () => {
               styles.freeCard,
               selectedPlan === 'free' && styles.planCardSelected
             ]}
-            onPress={() => setSelectedPlan('free')}
+            onPress={() => {
+              Haptics.selection();
+              setSelectedPlan('free');
+            }}
             activeOpacity={0.9}
           >
             <View style={styles.cardHeader}>
@@ -460,6 +468,7 @@ const styles = StyleSheet.create({
   continueButton: {
     width: '100%',
     marginBottom: 12,
+    borderRadius: 30,
   },
   premiumButton: {
     backgroundColor: Colors.amber,

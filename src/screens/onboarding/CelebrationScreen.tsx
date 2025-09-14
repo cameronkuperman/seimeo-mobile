@@ -15,6 +15,7 @@ import { Button } from '../../components/ui/Button';
 import { Colors } from '../../theme/colors';
 import { useOnboarding } from '../../contexts/OnboardingContext';
 import Svg, { Path, Circle, Rect } from 'react-native-svg';
+import { Haptics } from '../../utils/haptics';
 
 type NavigationProp = NativeStackNavigationProp<OnboardingStackParamList, 'Celebration'>;
 
@@ -177,10 +178,14 @@ const CelebrationScreen: React.FC = () => {
         friction: 7,
         useNativeDriver: true,
       }),
-    ]).start();
+    ]).start(() => {
+      // Play success haptic when animation completes
+      Haptics.success();
+    });
   }, [fadeAnim, slideAnim]);
 
   const handleContinue = () => {
+    Haptics.light();
     const nextScreen = getNextScreen('Celebration');
     navigation.navigate(nextScreen as any);
   };
@@ -308,12 +313,14 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 20,
+    paddingTop: 60,
+    paddingBottom: 100,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 2,
   },
   iconContainer: {
-    marginBottom: 40,
+    marginBottom: 30,
     alignItems: 'center',
     position: 'relative',
   },
@@ -324,7 +331,7 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 35,
   },
   title: {
     fontSize: 36,
@@ -350,7 +357,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '100%',
-    marginBottom: 40,
+    marginBottom: 20,
   },
   statCard: {
     alignItems: 'center',
@@ -383,12 +390,13 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 60 : 40,
+    bottom: 45,
     left: 20,
     right: 20,
   },
   continueButton: {
     width: '100%',
+    borderRadius: 30,
   },
 });
 

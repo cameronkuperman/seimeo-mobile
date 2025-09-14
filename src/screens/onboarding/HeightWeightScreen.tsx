@@ -14,6 +14,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { OnboardingStackParamList } from '../../navigation/OnboardingNavigator';
 import { Colors } from '../../theme/colors';
 import { useOnboarding } from '../../contexts/OnboardingContext';
+import { Haptics } from '../../utils/haptics';
 
 type NavigationProp = NativeStackNavigationProp<OnboardingStackParamList, 'HeightWeight'>;
 
@@ -35,6 +36,7 @@ const HeightWeightScreen: React.FC = () => {
   const kgValues = useMemo(() => Array.from({length: 181}, (_, i) => i + 20), []); // 20-200 kg
 
   const handleContinue = () => {
+    Haptics.light();
     const nextScreen = getNextScreen('HeightWeight');
     navigation.navigate(nextScreen as any);
   };
@@ -102,7 +104,10 @@ const HeightWeightScreen: React.FC = () => {
                 styles.unitButton,
                 unit === 'imperial' && styles.unitButtonActive,
               ]}
-              onPress={() => setUnit('imperial')}
+              onPress={() => {
+                Haptics.selection();
+                setUnit('imperial');
+              }}
             >
               <Text style={[
                 styles.unitButtonText,
@@ -116,7 +121,10 @@ const HeightWeightScreen: React.FC = () => {
                 styles.unitButton,
                 unit === 'metric' && styles.unitButtonActive,
               ]}
-              onPress={() => setUnit('metric')}
+              onPress={() => {
+                Haptics.selection();
+                setUnit('metric');
+              }}
             >
               <Text style={[
                 styles.unitButtonText,
@@ -418,13 +426,15 @@ const styles = StyleSheet.create({
     letterSpacing: -0.2,
   },
   footer: {
-    paddingTop: 30,
-    paddingBottom: Platform.OS === 'ios' ? 50 : 40,
+    position: 'absolute',
+    bottom: 45,
+    left: 20,
+    right: 20,
   },
   continueButton: {
     height: 58,
     backgroundColor: Colors.black,
-    borderRadius: 29,
+    borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
     ...Platform.select({

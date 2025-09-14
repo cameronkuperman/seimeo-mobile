@@ -15,6 +15,7 @@ import { OnboardingStackParamList } from '../../navigation/OnboardingNavigator';
 import { Button } from '../../components/ui/Button';
 import { Colors } from '../../theme/colors';
 import { useOnboarding } from '../../contexts/OnboardingContext';
+import { Haptics } from '../../utils/haptics';
 
 const { width, height } = Dimensions.get('window');
 
@@ -54,16 +55,19 @@ const HeroWelcomeScreen: React.FC = () => {
   }, []);
 
   const handleGetStarted = () => {
+    Haptics.light();
     const nextScreen = getNextScreen('HeroWelcome');
     navigation.navigate(nextScreen as any);
   };
 
   const handleSignIn = () => {
+    Haptics.light();
     // TODO: Navigate to sign in flow
     console.log('Sign in pressed');
   };
 
   const handleSkip = () => {
+    Haptics.light();
     // Navigate directly to main app (dashboard)
     navigation.reset({
       index: 0,
@@ -176,17 +180,19 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 20,
+    paddingTop: 80,
     justifyContent: 'space-between',
   },
   animationContainer: {
-    flex: 1,
+    flex: 0.85,
     justifyContent: 'center',
     alignItems: 'center',
-    minHeight: height * 0.4,
+    minHeight: height * 0.32,
+    marginTop: 40,
   },
   phonePlaceholder: {
-    width: width * 0.48,
-    height: height * 0.42,
+    width: width * 0.45,
+    height: height * 0.38,
     backgroundColor: Colors.black,
     borderRadius: 36,
     padding: 6,
@@ -258,7 +264,8 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     alignItems: 'center',
-    marginVertical: 45,
+    marginTop: 10,
+    marginBottom: 25,
   },
   headline: {
     fontSize: 32,
@@ -275,7 +282,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   buttonContainer: {
-    paddingBottom: 40,
+    paddingBottom: 45,
   },
   primaryButton: {
     width: '100%',
