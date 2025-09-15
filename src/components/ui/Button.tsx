@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    borderRadius: 8,
+    borderRadius: 28,
   },
 
   // Variants

@@ -369,7 +369,8 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   buttonContainer: {
-    marginTop: 'auto',
+    marginTop: 32,
+    paddingBottom: 20,
   },
   continueButton: {
     width: '100%',

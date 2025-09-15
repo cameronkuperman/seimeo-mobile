@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   buttonContainer: {
-    marginTop: 'auto',
+    marginTop: 32,
     paddingBottom: Platform.OS === 'ios' ? 40 : 30,
   },
   continueButton: {

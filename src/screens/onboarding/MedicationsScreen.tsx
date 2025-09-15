@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   buttonContainer: {
-    marginTop: 'auto',
+    marginTop: 32,
     paddingBottom: Platform.OS === 'ios' ? 40 : 30,
   },
   continueButton: {

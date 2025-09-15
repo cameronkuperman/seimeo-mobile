@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.3,
   },
   buttonsContainer: {
-    marginTop: 'auto',
+    marginTop: 32,
     paddingBottom: Platform.OS === 'ios' ? 100 : 80,
   },
   connectButton: {

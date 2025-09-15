@@ -181,14 +181,14 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 80,
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
   },
   animationContainer: {
     flex: 0.85,
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: height * 0.32,
-    marginTop: 40,
+    marginTop: -20,
   },
   phonePlaceholder: {
     width: width * 0.45,
@@ -264,8 +264,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 25,
+    marginBottom: 20,
   },
   headline: {
     fontSize: 32,
@@ -282,7 +281,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   buttonContainer: {
-    paddingBottom: 45,
+    paddingBottom: 20,
   },
   primaryButton: {
     width: '100%',
